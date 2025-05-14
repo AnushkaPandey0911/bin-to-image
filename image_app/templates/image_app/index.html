@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>BIN to Image Generator</title>
+    <script>
+        function toggleFields(select) {
+            const uploadBox = document.getElementById('uploadBox');
+            const patternBox = document.getElementById('patternBox');
+            if (select.value === 'upload') {
+                uploadBox.style.display = 'block';
+                patternBox.style.display = 'none';
+            } else if (select.value === 'pattern') {
+                uploadBox.style.display = 'none';
+                patternBox.style.display = 'block';
+            } else {
+                uploadBox.style.display = 'none';
+                patternBox.style.display = 'none';
+            }
+        }
+    </script>
+    {% load static %}
+<link rel="stylesheet" href="{% static 'image_app/style.css' %}">
+
+</head>
+<body>
+    <h1>BIN to Image Generator</h1>
+
+    <button onclick="location.href='/generate-bin/'">Generate BIN File</button>
+
+    <form action="/generate-image/" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- Source selection -->
+        <label>Select Source:</label>
+        <select name="source" onchange="toggleFields(this)">
+            <option value="generated">Use Generated BIN</option>
+            <option value="upload">Upload BIN File</option>
+            <option value="pattern">Generate Pattern</option>
+        </select>
+
+        <!-- Upload box -->
+        <div id="uploadBox" style="display:none;">
+            <p>Upload .bin file:</p>
+            <input type="file" name="bin_file" accept=".bin">
+        </div>
+
+        <!-- Pattern style dropdown -->
+        <div id="patternBox" style="display:none;">
+            <label>Select Pattern Style:</label>
+            <select name="pattern_type">
+                <option value="checkerboard">Checkerboard</option>
+    <option value="diagonal">Diagonal Stripes</option>
+    <option value="random">Random Noise</option>
+    <option value="horizontal_lines">Horizontal Lines</option>
+    <option value="vertical_lines">Vertical Lines</option>
+    <option value="diamond">Diamond Shape</option>
+            </select>
+        </div>
+
+        <!-- Size selector (works for all) -->
+        <label>Select Image Size:</label>
+        <select name="image_size">
+            <option value="50">50 x 50</option>
+            <option value="100" selected>100 x 100</option>
+            <option value="150">150 x 150</option>
+            <option value="200">200 x 200</option>
+        </select>
+
+        <br><br>
+        <input type="submit" value="Generate Image">
+    </form>
+
+    <div id="imgBox">
+        {% if image_path %}
+    <h3>Generated Image:</h3>
+    <img src="/{{ image_path }}" alt="Generated Image">
+{% endif %}
+    </div>
+</body>
+</html>
